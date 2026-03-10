@@ -7,9 +7,10 @@ JavaScript/TypeScript packages for [RDX (Reactive Document eXpressions)](https:/
 | Package | Description |
 |---|---|
 | [`@rdx-lang/types`](packages/types/) | TypeScript type definitions for the RDX AST |
-| [`@rdx-lang/wasm`](packages/wasm/) | WASM-compiled parser, validator, and transforms |
 | [`@rdx-lang/core`](packages/core/) | JS transform pipeline, AST walking, and utilities |
 | [`@rdx-lang/github`](packages/github/) | Transform: convert GitHub references to links |
+
+Compiled bindings (`@rdx-lang/wasm`, `@rdx-lang/node`) live in the [rdx](https://github.com/rdx-lang/rdx) Rust repo.
 
 ## Architecture
 
