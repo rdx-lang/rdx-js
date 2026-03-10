@@ -57,7 +57,9 @@ jobs:
     name: Publish to npm
     needs: [validate-version, ci]
     runs-on: ubuntu-latest
-    environment: npm
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -98,10 +100,8 @@ jobs:
           if npm view @rdx-lang/types@$VERSION version 2>/dev/null; then
             echo "@rdx-lang/types@$VERSION already published — skipping"
           else
-            npm publish --access public
+            npm publish --access public --provenance
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @rdx-lang/core
         working-directory: packages/core
@@ -110,10 +110,8 @@ jobs:
           if npm view @rdx-lang/core@$VERSION version 2>/dev/null; then
             echo "@rdx-lang/core@$VERSION already published — skipping"
           else
-            npm publish --access public
+            npm publish --access public --provenance
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @rdx-lang/github
         working-directory: packages/github
@@ -122,7 +120,5 @@ jobs:
           if npm view @rdx-lang/github@$VERSION version 2>/dev/null; then
             echo "@rdx-lang/github@$VERSION already published — skipping"
           else
-            npm publish --access public
+            npm publish --access public --provenance
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
