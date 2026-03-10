@@ -4,6 +4,7 @@ import type {
   RdxTransform,
   RdxTextNode,
   RdxLinkNode,
+  RdxPosition,
 } from "@rdx-lang/types";
 import { walk } from "@rdx-lang/core";
 
@@ -88,32 +89,46 @@ function expandTextNode(
 
   // Issues: #123
   for (const m of text.matchAll(ISSUE_RE)) {
+    const idx = m.index! + m[0].length - m[1].length - 1; // position of #
+    const len = m[1].length + 1;
     matches.push({
-      index: m.index! + m[0].length - m[1].length - 1, // position of #
-      length: m[1].length + 1,
-      node: makeLink(`#${m[1]}`, `${repoUrl}/issues/${m[1]}`, node.position),
+      index: idx,
+      length: len,
+      node: makeLink(
+        `#${m[1]}`,
+        `${repoUrl}/issues/${m[1]}`,
+        subPosition(node.position, idx, idx + len)
+      ),
     });
   }
 
   // Users: @username
   for (const m of text.matchAll(USER_RE)) {
+    const idx = m.index! + m[0].length - m[1].length - 1;
+    const len = m[1].length + 1;
     matches.push({
-      index: m.index! + m[0].length - m[1].length - 1,
-      length: m[1].length + 1,
-      node: makeLink(`@${m[1]}`, `${baseUrl}/${m[1]}`, node.position),
+      index: idx,
+      length: len,
+      node: makeLink(
+        `@${m[1]}`,
+        `${baseUrl}/${m[1]}`,
+        subPosition(node.position, idx, idx + len)
+      ),
     });
   }
 
   // Commits: abc1234f (must contain at least one letter)
   for (const m of text.matchAll(COMMIT_RE)) {
     if (!/[a-f]/i.test(m[1])) continue;
+    const idx = m.index!;
+    const len = m[1].length;
     matches.push({
-      index: m.index!,
-      length: m[1].length,
+      index: idx,
+      length: len,
       node: makeLink(
         m[1].slice(0, 7),
         `${repoUrl}/commit/${m[1]}`,
-        node.position
+        subPosition(node.position, idx, idx + len)
       ),
     });
   }
@@ -126,24 +141,60 @@ function expandTextNode(
   let cursor = 0;
 
   for (const match of matches) {
+    if (match.index < cursor) continue; // skip overlapping match
     if (match.index > cursor) {
-      result.push(makeText(text.slice(cursor, match.index), node.position));
+      result.push(
+        makeText(
+          text.slice(cursor, match.index),
+          subPosition(node.position, cursor, match.index)
+        )
+      );
     }
     result.push(match.node);
     cursor = match.index + match.length;
   }
 
   if (cursor < text.length) {
-    result.push(makeText(text.slice(cursor), node.position));
+    result.push(
+      makeText(
+        text.slice(cursor),
+        subPosition(node.position, cursor, text.length)
+      )
+    );
   }
 
   return result;
 }
 
+/**
+ * Derive a sub-position within a text node by slicing at character offsets.
+ * Since we only have byte offsets and line/column from the parent, we approximate
+ * by advancing offset/column by the character index (valid for ASCII content,
+ * which GitHub refs always are).
+ */
+function subPosition(
+  base: RdxPosition,
+  charStart: number,
+  charEnd: number
+): RdxPosition {
+  return {
+    start: {
+      line: base.start.line,
+      column: base.start.column + charStart,
+      offset: base.start.offset + charStart,
+    },
+    end: {
+      line: base.start.line,
+      column: base.start.column + charEnd,
+      offset: base.start.offset + charEnd,
+    },
+  };
+}
+
 function makeLink(
   text: string,
   url: string,
-  position: RdxTextNode["position"]
+  position: RdxPosition
 ): RdxLinkNode {
   return {
     type: "link",
@@ -153,9 +204,6 @@ function makeLink(
   };
 }
 
-function makeText(
-  value: string,
-  position: RdxTextNode["position"]
-): RdxTextNode {
+function makeText(value: string, position: RdxPosition): RdxTextNode {
   return { type: "text", value, position };
 }
