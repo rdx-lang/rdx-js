@@ -104,7 +104,12 @@ jobs:
           if npm view @rdx-lang/types@$VERSION version 2>/dev/null; then
             echo "@rdx-lang/types@$VERSION already published — skipping"
           else
-            npm publish --access public --provenance
+            TAG_FLAG=""
+            if [[ "$VERSION" == *-* ]]; then
+              PRERELEASE="${VERSION#*-}"
+              TAG_FLAG="--tag ${PRERELEASE%%.*}"
+            fi
+            npm publish --access public --provenance $TAG_FLAG
           fi
 
       - name: Publish @rdx-lang/core
@@ -114,7 +119,12 @@ jobs:
           if npm view @rdx-lang/core@$VERSION version 2>/dev/null; then
             echo "@rdx-lang/core@$VERSION already published — skipping"
           else
-            npm publish --access public --provenance
+            TAG_FLAG=""
+            if [[ "$VERSION" == *-* ]]; then
+              PRERELEASE="${VERSION#*-}"
+              TAG_FLAG="--tag ${PRERELEASE%%.*}"
+            fi
+            npm publish --access public --provenance $TAG_FLAG
           fi
 
       - name: Publish @rdx-lang/github
@@ -124,5 +134,10 @@ jobs:
           if npm view @rdx-lang/github@$VERSION version 2>/dev/null; then
             echo "@rdx-lang/github@$VERSION already published — skipping"
           else
-            npm publish --access public --provenance
+            TAG_FLAG=""
+            if [[ "$VERSION" == *-* ]]; then
+              PRERELEASE="${VERSION#*-}"
+              TAG_FLAG="--tag ${PRERELEASE%%.*}"
+            fi
+            npm publish --access public --provenance $TAG_FLAG
           fi
