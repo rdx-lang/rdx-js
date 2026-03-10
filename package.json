@@ -1,0 +1,9 @@
+{
+  "name": "rdx-js",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "bun run --filter '@rdx-lang/types' build && bun run --filter '@rdx-lang/core' build && bun run --filter '@rdx-lang/github' build",
+    "typecheck": "bun run --filter '*' tsc --noEmit"
+  }
+}

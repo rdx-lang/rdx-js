@@ -1,0 +1,57 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "rdx-js",
+    },
+    "packages/core": {
+      "name": "@rdx-lang/core",
+      "version": "0.1.0",
+      "dependencies": {
+        "@rdx-lang/types": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.8",
+      },
+    },
+    "packages/github": {
+      "name": "@rdx-lang/github",
+      "version": "0.1.0",
+      "dependencies": {
+        "@rdx-lang/core": "workspace:*",
+        "@rdx-lang/types": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.8",
+      },
+    },
+    "packages/types": {
+      "name": "@rdx-lang/types",
+      "version": "0.1.0",
+      "devDependencies": {
+        "typescript": "^5.8",
+      },
+    },
+    "packages/wasm": {
+      "name": "@rdx-lang/wasm",
+      "version": "0.1.0",
+      "dependencies": {
+        "@rdx-lang/types": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.8",
+      },
+    },
+  },
+  "packages": {
+    "@rdx-lang/core": ["@rdx-lang/core@workspace:packages/core"],
+
+    "@rdx-lang/github": ["@rdx-lang/github@workspace:packages/github"],
+
+    "@rdx-lang/types": ["@rdx-lang/types@workspace:packages/types"],
+
+    "@rdx-lang/wasm": ["@rdx-lang/wasm@workspace:packages/wasm"],
+
+    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+  }
+}

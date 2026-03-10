@@ -1,0 +1,30 @@
+{
+  "name": "@rdx-lang/core",
+  "version": "0.1.0",
+  "description": "RDX core utilities — JS transform pipeline, AST walking, and helpers",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir dist --target node && bun x tsc --emitDeclarationOnly"
+  },
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rdx-lang/rdx-js",
+    "directory": "packages/core"
+  },
+  "dependencies": {
+    "@rdx-lang/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8"
+  }
+}
